@@ -16,6 +16,8 @@ all: $(addprefix build-,$(ARCH))
 # Image registry for build/push image targets
 IMAGE_REGISTRY ?= ghcr.io/external-secrets/external-secrets
 
+PR_IMG_TAG ?=
+
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
 CRD_DIR     ?= deploy/crds
@@ -86,6 +88,12 @@ test: generate ## Run tests
 test.e2e: generate ## Run e2e tests
 	@$(INFO) go test e2e-tests
 	$(MAKE) -C ./e2e test
+	@$(OK) go test unit-tests
+
+.PHONY: test.e2e.managed
+test.e2e.managed: generate ## Run e2e tests
+	@$(INFO) go test e2e-tests
+	$(MAKE) -C ./e2e test.managed
 	@$(OK) go test unit-tests
 
 .PHONY: build

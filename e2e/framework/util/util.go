@@ -206,3 +206,15 @@ func WaitForURL(url string) error {
 		return false, err
 	})
 }
+
+// UpdateKubeSA updates a new Kubernetes Service Account for a test.
+func UpdateKubeSA(baseName string, kubeClientSet kubernetes.Interface, ns string, annotations map[string]string) (*v1.ServiceAccount, error) {
+	sa := &v1.ServiceAccount{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        baseName,
+			Annotations: annotations,
+		},
+	}
+
+	return kubeClientSet.CoreV1().ServiceAccounts(ns).Update(context.TODO(), sa, metav1.UpdateOptions{})
+}
